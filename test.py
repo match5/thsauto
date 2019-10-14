@@ -19,6 +19,12 @@ if __name__ == '__main__':
     result = auto.buy(stock_no='162411', amount=100, price=0.41)    # 买入股票
     print(result)
 
+    print('已成交')
+    print(auto.get_filled_orders())                                 # 获取已成交订单
+    
+    print('未成交')
+    print(auto.get_active_orders())                                 # 获取未成交订单
+
     if result and result['success']:                                # 如果买入下单成功，尝试撤单
         print('撤单')
         print(auto.cancel(entrust_no=result['entrust_no']))

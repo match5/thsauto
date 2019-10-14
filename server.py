@@ -50,6 +50,20 @@ def get_position():
     result = auto.get_position()
     return jsonify(result), 200
 
+@app.route('/thsauto/orders/active', methods = ['GET'])
+@error_handle
+@interval_call
+def get_active_orders():
+    result = auto.get_active_orders()
+    return jsonify(result), 200
+
+@app.route('/thsauto/orders/filled', methods = ['GET'])
+@error_handle
+@interval_call
+def get_filled_orders():
+    result = auto.get_filled_orders()
+    return jsonify(result), 200
+
 @app.route('/thsauto/sell', methods = ['GET'])
 @error_handle
 @interval_call

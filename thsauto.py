@@ -71,31 +71,7 @@ class ThsAuto:
         hwnd = win32gui.FindWindowEx(hwnd, None, u'SysTreeView32', None)
         return hwnd
 
-    def get_balance_hwnd(self):
-        hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
-        hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
-        return hwnd
-
-    def get_position_hwnd(self):
-        hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
-        hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
-        return hwnd
-
-    def get_buy_hwnd(self):
-        hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
-        hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
-        return hwnd
-
-    def get_sell_hwnd(self):
-        hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
-        hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
-        return hwnd
-
-    def get_cancel_hwnd(self):
+    def get_right_hwnd(self):
         hwnd = self.hwnd_main
         hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
         hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
@@ -104,15 +80,12 @@ class ThsAuto:
     def get_balance(self):
         hot_key(['F4'])
         time.sleep(sleep_time)
-        hwnd = self.get_balance_hwnd()
+        self.refresh()
+        hwnd = self.get_right_hwnd()
         result = {}
         for key, cid in BALANCE_CONTROL_ID_GROUP.items():
             ctrl = win32gui.GetDlgItem(hwnd, cid)
-            length = win32api.SendMessage(ctrl, win32con.WM_GETTEXTLENGTH)
-            buf = win32gui.PyMakeBuffer(length)
-            win32api.SendMessage(ctrl, win32con.WM_GETTEXT, length, buf)
-            address, length = win32gui.PyGetBufferAddressAndLen(buf)
-            result[key] = win32gui.PyGetString(address, length)
+            result[key] = get_text(ctrl)
         return result
         
     def get_position(self):
@@ -120,7 +93,50 @@ class ThsAuto:
         time.sleep(sleep_time)
         hot_key(['F6'])
         time.sleep(sleep_time)
-        hwnd = self.get_position_hwnd()
+        self.refresh()
+        hwnd = self.get_right_hwnd()
+        ctrl = win32gui.GetDlgItem(hwnd, 0x417)
+        win32gui.SetForegroundWindow(ctrl)
+        time.sleep(sleep_time)
+        hot_key(['ctrl', 'c'])
+        data = None
+        retry = 0
+        while not data and retry < retry_time:
+            retry += 1
+            time.sleep(sleep_time)
+            data = get_clipboard_data()
+        if data:
+            return parse_table(data)
+        return {}
+
+    def get_active_orders(self):
+        hot_key(['F1'])
+        time.sleep(sleep_time)
+        hot_key(['F8'])
+        time.sleep(sleep_time)
+        self.refresh()
+        hwnd = self.get_right_hwnd()
+        ctrl = win32gui.GetDlgItem(hwnd, 0x417)
+        win32gui.SetForegroundWindow(ctrl)
+        time.sleep(sleep_time)
+        hot_key(['ctrl', 'c'])
+        data = None
+        retry = 0
+        while not data and retry < retry_time:
+            retry += 1
+            time.sleep(sleep_time)
+            data = get_clipboard_data()
+        if data:
+            return parse_table(data)
+        return {}
+        
+    def get_filled_orders(self):
+        hot_key(['F2'])
+        time.sleep(sleep_time)
+        hot_key(['F7'])
+        time.sleep(sleep_time)
+        self.refresh()
+        hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
         win32gui.SetForegroundWindow(ctrl)
         time.sleep(sleep_time)
@@ -139,7 +155,7 @@ class ThsAuto:
         price = '%.3f' % float(price)
         hot_key(['F2'])
         time.sleep(sleep_time)
-        hwnd = self.get_sell_hwnd()
+        hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
@@ -166,7 +182,7 @@ class ThsAuto:
         price = '%.3f' % float(price)
         hot_key(['F1'])
         time.sleep(sleep_time)
-        hwnd = self.get_buy_hwnd()
+        hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
@@ -192,7 +208,7 @@ class ThsAuto:
     def cancel(self, entrust_no):
         hot_key(['F3'])
         time.sleep(sleep_time)
-        hwnd = self.get_cancel_hwnd()
+        hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
         win32gui.SetForegroundWindow(ctrl)
         time.sleep(sleep_time)
@@ -257,7 +273,6 @@ class ThsAuto:
             if not handler(hwnd, popups):
                 break
         if popups:
-            print(popups)
             ctrl = popups[0]
             text = get_text(ctrl)
             if u'已成功提交' in text:
@@ -271,3 +286,12 @@ class ThsAuto:
                     'success': False,
                     'msg': text
                 }
+
+    def refresh(self):
+        left, top, right, bottom = win32gui.GetWindowRect(self.hwnd_main)
+        x = 170 + left
+        y = 40 + top
+        win32api.SetCursorPos((x, y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        time.sleep(sleep_time)
