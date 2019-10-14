@@ -236,9 +236,12 @@ class ThsAuto:
     def get_result(self):
         tid, pid = win32process.GetWindowThreadProcessId(self.hwnd_main)
         def enum_children(hwnd, results):
-            if (win32gui.IsWindowVisible(hwnd) and
-                    win32gui.IsWindowEnabled(hwnd)):
-                win32gui.EnumChildWindows(hwnd, handler, results)
+            try:
+                if (win32gui.IsWindowVisible(hwnd) and
+                        win32gui.IsWindowEnabled(hwnd)):
+                    win32gui.EnumChildWindows(hwnd, handler, results)
+            except Exception:
+                return
 
         def handler(hwnd, results):
             if (win32api.GetWindowLong(hwnd, win32con.GWL_ID) == 0x3EC and 
@@ -254,6 +257,7 @@ class ThsAuto:
             if not handler(hwnd, popups):
                 break
         if popups:
+            print(popups)
             ctrl = popups[0]
             text = get_text(ctrl)
             if u'已成功提交' in text:
