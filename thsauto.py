@@ -166,17 +166,20 @@ class ThsAuto:
         set_text(ctrl, str(amount))
         time.sleep(sleep_time)
         hot_key(['enter'])
-        time.sleep(sleep_time)
         result = None
         retry = 0
-        while not result and retry < retry_time:
-            retry += 1
-            time.sleep(sleep_time)
-            hot_key(['y'])
+        while retry < retry_time:
             time.sleep(sleep_time)
             result = self.get_result()
-        hot_key(['enter'])
-        return result
+            if result:
+                hot_key(['enter'])
+                return result
+            hot_key(['y'])
+            retry += 1
+        return {
+            'code': 2,
+            'status': 'unknown',
+        }
 
     def buy(self, stock_no, amount, price):
         price = '%.3f' % float(price)
@@ -193,17 +196,20 @@ class ThsAuto:
         set_text(ctrl, str(amount))
         time.sleep(sleep_time)
         hot_key(['enter'])
-        time.sleep(sleep_time)
         result = None
         retry = 0
-        while not result and retry < retry_time:
-            retry += 1
-            time.sleep(sleep_time)
-            hot_key(['y'])
+        while retry < retry_time:
             time.sleep(sleep_time)
             result = self.get_result()
-        hot_key(['enter'])
-        return result
+            if result:
+                hot_key(['enter'])
+                return result
+            hot_key(['y'])
+            retry += 1
+        return {
+            'code': 2,
+            'status': 'unknown',
+        }
 
     def cancel(self, entrust_no):
         hot_key(['F3'])
@@ -227,7 +233,7 @@ class ThsAuto:
                     find = i
                     break
             if find is None:
-                return {'success': False, 'msg': u'没找到指定订单'}
+                return {'code': 1, 'status': 'failed', 'msg': u'没找到指定订单'}
             left, top, right, bottom = win32gui.GetWindowRect(ctrl)
             x = 50 + left
             y = 30 + 16 * find + top
@@ -238,16 +244,11 @@ class ThsAuto:
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
             time.sleep(sleep_time)
-            result = None
-            retry = 0
-            while not result and retry < retry_time:
-                retry += 1
-                time.sleep(sleep_time)
-                hot_key(['y'])
-                time.sleep(sleep_time)
-                result = self.get_result()
             hot_key(['enter'])
-            return result
+            return {
+            'code': 0,
+            'status': 'succeed',
+        }
 
     def get_result(self):
         tid, pid = win32process.GetWindowThreadProcessId(self.hwnd_main)
@@ -277,14 +278,16 @@ class ThsAuto:
             text = get_text(ctrl)
             if u'已成功提交' in text:
                 return {
-                    'success': True,
+                    'code': 0,
+                    'status': 'succeed',
                     'msg': text,
-                    'entrust_no': text.split(u'合同编号：')[1].split('。')[0]
+                    'entrust_no': text.split(u'合同编号：')[1].split('。')[0],
                 }
             else:
                 return {
-                    'success': False,
-                    'msg': text
+                    'code': 1,
+                    'status': 'failed',
+                    'msg': text,
                 }
 
     def refresh(self):
