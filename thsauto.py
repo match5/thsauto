@@ -179,6 +179,7 @@ class ThsAuto:
         return {
             'code': 2,
             'status': 'unknown',
+            'msg': '获取结果失败,请自行确认订单状态',
         }
 
     def buy(self, stock_no, amount, price):
@@ -209,6 +210,7 @@ class ThsAuto:
         return {
             'code': 2,
             'status': 'unknown',
+            'msg': '获取结果失败,请自行确认订单状态',
         }
 
     def cancel(self, entrust_no):
