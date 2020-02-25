@@ -82,11 +82,14 @@ class ThsAuto:
         time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
-        result = {}
+        data = {}
         for key, cid in BALANCE_CONTROL_ID_GROUP.items():
             ctrl = win32gui.GetDlgItem(hwnd, cid)
-            result[key] = get_text(ctrl)
-        return result
+            data[key] = get_text(ctrl)
+        return {
+            'code': 0, 'status': 'succeed',
+            'data': data,
+        }
         
     def get_position(self):
         hot_key(['F1'])
@@ -106,8 +109,11 @@ class ThsAuto:
             time.sleep(sleep_time)
             data = get_clipboard_data()
         if data:
-            return parse_table(data)
-        return {}
+            return {
+                'code': 0, 'status': 'succeed',
+                'data': parse_table(data),
+            }
+        return {'code': 1, 'status': 'failed'}
 
     def get_active_orders(self):
         hot_key(['F1'])
@@ -127,8 +133,11 @@ class ThsAuto:
             time.sleep(sleep_time)
             data = get_clipboard_data()
         if data:
-            return parse_table(data)
-        return {}
+            return {
+                'code': 0, 'status': 'succeed',
+                'data': parse_table(data),
+            }
+        return {'code': 1, 'status': 'failed'}
         
     def get_filled_orders(self):
         hot_key(['F2'])
@@ -148,8 +157,11 @@ class ThsAuto:
             time.sleep(sleep_time)
             data = get_clipboard_data()
         if data:
-            return parse_table(data)
-        return {}
+            return {
+                'code': 0, 'status': 'succeed',
+                'data': parse_table(data),
+            }
+        return {'code': 1, 'status': 'failed'}
 
     def sell(self, stock_no, amount, price):
         hot_key(['F2'])
