@@ -261,10 +261,8 @@ class ThsAuto:
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
             time.sleep(sleep_time)
             hot_key(['enter'])
-            return {
-            'code': 0,
-            'status': 'succeed',
-        }
+            return {'code': 0, 'status': 'succeed'}
+        return {'code': 1, 'status': 'failed'}
 
     def get_result(self):
         tid, pid = win32process.GetWindowThreadProcessId(self.hwnd_main)
