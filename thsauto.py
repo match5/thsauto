@@ -152,16 +152,17 @@ class ThsAuto:
         return {}
 
     def sell(self, stock_no, amount, price):
-        price = '%.3f' % float(price)
         hot_key(['F2'])
         time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
-        ctrl = win32gui.GetDlgItem(hwnd, 0x409)
-        set_text(ctrl, price)
-        time.sleep(sleep_time)
+        if price is not None:
+            price = '%.3f' % price
+            ctrl = win32gui.GetDlgItem(hwnd, 0x409)
+            set_text(ctrl, price)
+            time.sleep(sleep_time)
         ctrl = win32gui.GetDlgItem(hwnd, 0x40A)
         set_text(ctrl, str(amount))
         time.sleep(sleep_time)
@@ -183,16 +184,17 @@ class ThsAuto:
         }
 
     def buy(self, stock_no, amount, price):
-        price = '%.3f' % float(price)
         hot_key(['F1'])
         time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
-        ctrl = win32gui.GetDlgItem(hwnd, 0x409)
-        set_text(ctrl, price)
-        time.sleep(sleep_time)
+        if price is not None:
+            price = '%.3f' % price
+            ctrl = win32gui.GetDlgItem(hwnd, 0x409)
+            set_text(ctrl, price)
+            time.sleep(sleep_time)
         ctrl = win32gui.GetDlgItem(hwnd, 0x40A)
         set_text(ctrl, str(amount))
         time.sleep(sleep_time)

@@ -61,8 +61,10 @@ def get_filled_orders():
 def sell():
     stock = request.args['stock_no']
     amount = request.args['amount']
-    price = request.args['price']
-    result = auto.sell(stock_no=stock, amount=int(amount), price=float(price))
+    price = request.args.get('price', None)
+    if price is not None:
+        price = float(price)
+    result = auto.sell(stock_no=stock, amount=int(amount), price=price)
     return jsonify(result), 200
 
 @app.route('/thsauto/buy', methods = ['GET'])
@@ -70,8 +72,10 @@ def sell():
 def buy():
     stock = request.args['stock_no']
     amount = request.args['amount']
-    price = request.args['price']
-    result = auto.buy(stock_no=stock, amount=int(amount), price=float(price))
+    price = request.args.get('price', None)
+    if price is not None:
+        price = float(price)
+    result = auto.buy(stock_no=stock, amount=int(amount), price=price)
     return jsonify(result), 200
 
 @app.route('/thsauto/cancel', methods = ['GET'])
