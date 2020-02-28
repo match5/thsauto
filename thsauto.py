@@ -230,6 +230,7 @@ class ThsAuto:
     def cancel(self, entrust_no):
         hot_key(['F3'])
         time.sleep(sleep_time)
+        self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
         win32gui.SetForegroundWindow(ctrl)
