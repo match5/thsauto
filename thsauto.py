@@ -171,6 +171,7 @@ class ThsAuto:
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
         if price is not None:
+            time.sleep(sleep_time)
             price = '%.3f' % price
             ctrl = win32gui.GetDlgItem(hwnd, 0x409)
             set_text(ctrl, price)
@@ -203,6 +204,7 @@ class ThsAuto:
         set_text(ctrl, stock_no)
         time.sleep(sleep_time)
         if price is not None:
+            time.sleep(sleep_time)
             price = '%.3f' % price
             ctrl = win32gui.GetDlgItem(hwnd, 0x409)
             set_text(ctrl, price)
