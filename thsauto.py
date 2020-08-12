@@ -13,6 +13,8 @@ from const import VK_CODE, BALANCE_CONTROL_ID_GROUP
 sleep_time = 0.2
 retry_time = 10
 
+window_title = u'网上股票交易系统5.0'
+
 def get_clipboard_data():
     win32clipboard.OpenClipboard()
     try:
@@ -57,10 +59,29 @@ def parse_table(text):
 
 class ThsAuto:
 
-    def __init__(self, window_title=u'网上股票交易系统5.0'):
+    def __init__(self):
+        self.hwnd_main = None
+
+    def bind_client(self):
         hwnd = win32gui.FindWindow(None, window_title)
-        win32gui.SetForegroundWindow(hwnd)
-        self.hwnd_main = hwnd
+        if hwnd > 0:
+            win32gui.SetForegroundWindow(hwnd)
+            self.hwnd_main = hwnd
+
+    def kill_client(self):
+        self.hwnd_main = None
+        retry = 5
+        while(retry > 0):
+            hwnd = win32gui.FindWindow(None, window_title)
+            if hwnd == 0:
+                break
+            else:
+                win32gui.SetForegroundWindow(hwnd)
+                time.sleep(sleep_time)
+                hot_key(['alt', 'F4'])
+                time.sleep(1)
+                retry -= 1
+                
 
     def get_tree_hwnd(self):
         hwnd = self.hwnd_main

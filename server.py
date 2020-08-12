@@ -5,10 +5,17 @@ import time
 import sys
 import threading
 
+import os
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 auto = ThsAuto()
+
+client_path = None
+def run_client():
+    os.system("start " + client_path)
+    
 
 lock = threading.Lock()
 next_time = 0
@@ -85,6 +92,26 @@ def cancel():
     result = auto.cancel(entrust_no=entrust_no)
     return jsonify(result), 200
 
+@app.route('/thsauto/client/kill', methods = ['GET'])
+@interval_call
+def kill_client():
+    auto.kill_client()
+    return jsonify({'code': 0, 'status': 'succeed'}), 200
+
+
+@app.route('/thsauto/client/restart', methods = ['GET'])
+@interval_call
+def restart_client():
+    auto.kill_client()
+    run_client()
+    time.sleep(5)
+    auto.bind_client()
+    if auto.hwnd_main is None:
+        return jsonify({'code': 1, 'status': 'failed'}), 200
+    else:
+        return jsonify({'code': 0, 'status': 'succeed'}), 200
+
+
 if __name__ == '__main__':
     host = '127.0.0.1'
     port = 5000
@@ -92,4 +119,9 @@ if __name__ == '__main__':
         host = sys.argv[1]
     if len(sys.argv) > 2:
         port = int(sys.argv[2])
+    if len(sys.argv) > 3:
+        client_path = sys.argv[3]
+    auto.bind_client()
+    if auto.hwnd_main is None and client_path is not None:
+        run_client()
     app.run(host=host, port=port)
