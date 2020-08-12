@@ -14,7 +14,7 @@ auto = ThsAuto()
 
 client_path = None
 def run_client():
-    os.system("start " + client_path)
+    os.system('start ' + client_path)
     
 
 lock = threading.Lock()
