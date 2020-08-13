@@ -123,5 +123,5 @@ if __name__ == '__main__':
         client_path = sys.argv[3]
     auto.bind_client()
     if auto.hwnd_main is None and client_path is not None:
-        run_client()
+        restart_client()
     app.run(host=host, port=port)
