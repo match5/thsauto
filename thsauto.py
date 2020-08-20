@@ -74,6 +74,7 @@ class ThsAuto:
         while(retry > 0):
             hwnd = win32gui.FindWindow(None, window_title)
             if hwnd == 0:
+                time.sleep(1)
                 break
             else:
                 win32gui.SetForegroundWindow(hwnd)
@@ -85,16 +86,16 @@ class ThsAuto:
 
     def get_tree_hwnd(self):
         hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxWnd42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'Afx:400000:0', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxWnd42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'SysTreeView32', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'Afx:400000:0', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'SysTreeView32', None)
         return hwnd
 
     def get_right_hwnd(self):
         hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, u'AfxMDIFrame42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame42s', None)
         hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
         return hwnd
 
@@ -106,7 +107,8 @@ class ThsAuto:
         data = {}
         for key, cid in BALANCE_CONTROL_ID_GROUP.items():
             ctrl = win32gui.GetDlgItem(hwnd, cid)
-            data[key] = get_text(ctrl)
+            if ctrl > 0 and win32gui.IsWindowVisible(ctrl):
+                data[key] = get_text(ctrl)
         return {
             'code': 0, 'status': 'succeed',
             'data': data,
