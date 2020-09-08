@@ -42,30 +42,35 @@ def interval_call(func):
 @app.route('/thsauto/balance', methods = ['GET'])
 @interval_call
 def get_balance():
+    auto.active_mian_window()
     result = auto.get_balance()
     return jsonify(result), 200
 
 @app.route('/thsauto/position', methods = ['GET'])
 @interval_call
 def get_position():
+    auto.active_mian_window()
     result = auto.get_position()
     return jsonify(result), 200
 
 @app.route('/thsauto/orders/active', methods = ['GET'])
 @interval_call
 def get_active_orders():
+    auto.active_mian_window()
     result = auto.get_active_orders()
     return jsonify(result), 200
 
 @app.route('/thsauto/orders/filled', methods = ['GET'])
 @interval_call
 def get_filled_orders():
+    auto.active_mian_window()
     result = auto.get_filled_orders()
     return jsonify(result), 200
 
 @app.route('/thsauto/sell', methods = ['GET'])
 @interval_call
 def sell():
+    auto.active_mian_window()
     stock = request.args['stock_no']
     amount = request.args['amount']
     price = request.args.get('price', None)
@@ -77,6 +82,7 @@ def sell():
 @app.route('/thsauto/buy', methods = ['GET'])
 @interval_call
 def buy():
+    auto.active_mian_window()
     stock = request.args['stock_no']
     amount = request.args['amount']
     price = request.args.get('price', None)
@@ -88,6 +94,7 @@ def buy():
 @app.route('/thsauto/cancel', methods = ['GET'])
 @interval_call
 def cancel():
+    auto.active_mian_window()
     entrust_no = request.args['entrust_no']
     result = auto.cancel(entrust_no=entrust_no)
     return jsonify(result), 200
@@ -95,6 +102,7 @@ def cancel():
 @app.route('/thsauto/client/kill', methods = ['GET'])
 @interval_call
 def kill_client():
+    auto.active_mian_window()
     auto.kill_client()
     return jsonify({'code': 0, 'status': 'succeed'}), 200
 
@@ -102,6 +110,7 @@ def kill_client():
 @app.route('/thsauto/client/restart', methods = ['GET'])
 @interval_call
 def restart_client():
+    auto.active_mian_window()
     auto.kill_client()
     run_client()
     time.sleep(5)

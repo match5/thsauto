@@ -338,3 +338,8 @@ class ThsAuto:
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         time.sleep(sleep_time)
+
+    def active_mian_window(self):
+        if self.hwnd_main is not None:
+            ctypes.windll.user32.SwitchToThisWindow(self.hwnd_main, True)
+            time.sleep(sleep_time)
