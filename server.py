@@ -91,6 +91,30 @@ def buy():
     result = auto.buy(stock_no=stock, amount=int(amount), price=price)
     return jsonify(result), 200
 
+@app.route('/thsauto/buy/kc', methods = ['GET'])
+@interval_call
+def buy_kc():
+    auto.active_mian_window()
+    stock = request.args['stock_no']
+    amount = request.args['amount']
+    price = request.args.get('price', None)
+    if price is not None:
+        price = float(price)
+    result = auto.buy_kc(stock_no=stock, amount=int(amount), price=price)
+    return jsonify(result), 200
+
+@app.route('/thsauto/sell/kc', methods = ['GET'])
+@interval_call
+def sell_kc():
+    auto.active_mian_window()
+    stock = request.args['stock_no']
+    amount = request.args['amount']
+    price = request.args.get('price', None)
+    if price is not None:
+        price = float(price)
+    result = auto.sell_kc(stock_no=stock, amount=int(amount), price=price)
+    return jsonify(result), 200
+
 @app.route('/thsauto/cancel', methods = ['GET'])
 @interval_call
 def cancel():
@@ -119,6 +143,14 @@ def restart_client():
         return jsonify({'code': 1, 'status': 'failed'}), 200
     else:
         return jsonify({'code': 0, 'status': 'succeed'}), 200
+
+
+@app.route('/thsauto/test', methods = ['GET'])
+@interval_call
+def test():
+    auto.active_mian_window()
+    auto.test()
+    return jsonify({}), 200
 
 
 if __name__ == '__main__':
