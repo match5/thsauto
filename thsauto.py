@@ -122,9 +122,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        win32gui.SetForegroundWindow(ctrl)
-        time.sleep(sleep_time)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -146,9 +144,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        win32gui.SetForegroundWindow(ctrl)
-        time.sleep(sleep_time)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -170,9 +166,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        win32gui.SetForegroundWindow(ctrl)
-        time.sleep(sleep_time)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -258,9 +252,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        win32gui.SetForegroundWindow(ctrl)
-        time.sleep(sleep_time)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -343,3 +335,16 @@ class ThsAuto:
         if self.hwnd_main is not None:
             ctypes.windll.user32.SwitchToThisWindow(self.hwnd_main, True)
             time.sleep(sleep_time)
+
+    def copy_table(self, ctrl):
+        left, top, right, bottom = win32gui.GetWindowRect(ctrl)
+        x = right - 50
+        y = bottom - 50
+        win32api.SetCursorPos((x, y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0)
+        time.sleep(sleep_time)
+        hot_key(['down_arrow'])
+        hot_key(['down_arrow'])
+        hot_key(['down_arrow'])
+        hot_key(['enter'])
