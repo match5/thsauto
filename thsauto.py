@@ -265,11 +265,7 @@ class ThsAuto:
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
-        time.sleep(0.5)
-        result = self.get_result(0x410)
-        if result:
-            hot_key(['enter'])
-            return result
+        time.sleep(sleep_time)
         if price is not None:
             time.sleep(sleep_time)
             price = '%.3f' % price
@@ -302,11 +298,6 @@ class ThsAuto:
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
-        time.sleep(0.5)
-        result = self.get_result(0x410)
-        if result:
-            hot_key(['enter'])
-            return result
         time.sleep(sleep_time)
         if price is not None:
             time.sleep(sleep_time)
