@@ -131,7 +131,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.copy_table(ctrl)
+        self.right_click_menu(ctrl, -50, -50, key="c")
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -154,7 +154,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.copy_table(ctrl)
+        self.right_click_menu(ctrl, -50, -50, key="c")
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -177,7 +177,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.copy_table(ctrl)
+        self.right_click_menu(ctrl, -50, -50, key="c")
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -332,7 +332,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.copy_table(ctrl)
+        self.right_click_menu(ctrl, -50, -50, key="c")
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -416,18 +416,24 @@ class ThsAuto:
             ctypes.windll.user32.SwitchToThisWindow(self.hwnd_main, True)
             time.sleep(sleep_time)
 
-    def copy_table(self, ctrl):
-        left, top, right, bottom = win32gui.GetWindowRect(ctrl)
-        x = right - 50
-        y = bottom - 50
+    def right_click_menu(self, hwnd, x, y, idx=None, key=None):
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+        x = left + x if x > 0 else right + x
+        y = top + y if y > 0 else bottom + y
         win32api.SetCursorPos((x, y))
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0)
         time.sleep(sleep_time)
-        hot_key(['down_arrow'])
-        hot_key(['down_arrow'])
-        hot_key(['down_arrow'])
-        hot_key(['enter'])
+        if idx is not None:
+            while (idx >= 0):
+                hot_key(['down_arrow'])
+                idx -= 1
+            hot_key(['enter'])
+        elif hot_key is not None:
+            if isinstance(key, list):
+                hot_key(key)
+            else:
+                hot_key([key])
 
     def switch_to_normal(self):
         tabs = self.get_left_bottom_tabs()
@@ -473,4 +479,4 @@ class ThsAuto:
 
     def test(self):
         pass
-        
+
