@@ -122,7 +122,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, key="c")
+        self.right_click_menu(ctrl, -50, -50, idx=3)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -144,7 +144,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, key="c")
+        self.right_click_menu(ctrl, -50, -50, idx=2)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -166,7 +166,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, key="c")
+        self.right_click_menu(ctrl, -50, -50, idx=2)
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -252,7 +252,7 @@ class ThsAuto:
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, key="c")
+        self.right_click_menu(ctrl, -50, -50, idx=2)
         data = None
         retry = 0
         while not data and retry < retry_time:
