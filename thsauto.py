@@ -11,6 +11,7 @@ import math
 from const import VK_CODE, BALANCE_CONTROL_ID_GROUP
 
 sleep_time = 0.2
+refresh_sleep_time = 0.5
 retry_time = 10
 
 window_title = u'网上股票交易系统5.0'
@@ -109,7 +110,6 @@ class ThsAuto:
     def get_balance(self):
         self.switch_to_normal()
         hot_key(['F4'])
-        time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         data = {}
@@ -125,13 +125,15 @@ class ThsAuto:
     def get_position(self):
         self.switch_to_normal()
         hot_key(['F1'])
-        time.sleep(sleep_time)
         hot_key(['F6'])
-        time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, idx=5)
+
+        # self.right_click_menu(ctrl, -50, -50, idx=5)
+        win32gui.SetForegroundWindow(ctrl)
+        hot_key(['ctrl', 'c'])
+
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -148,13 +150,16 @@ class ThsAuto:
     def get_active_orders(self):
         self.switch_to_normal()
         hot_key(['F1'])
-        time.sleep(sleep_time)
         hot_key(['F8'])
         time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, idx=3)
+
+        # self.right_click_menu(ctrl, -50, -50, idx=3)
+        win32gui.SetForegroundWindow(ctrl)
+        hot_key(['ctrl', 'c'])
+        
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -171,13 +176,16 @@ class ThsAuto:
     def get_filled_orders(self):
         self.switch_to_normal()
         hot_key(['F2'])
-        time.sleep(sleep_time)
         hot_key(['F7'])
         time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, idx=3)
+
+        # self.right_click_menu(ctrl, -50, -50, idx=3)
+        win32gui.SetForegroundWindow(ctrl)
+        hot_key(['ctrl', 'c'])
+
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -194,7 +202,6 @@ class ThsAuto:
     def sell(self, stock_no, amount, price):
         self.switch_to_normal()
         hot_key(['F2'])
-        time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
@@ -228,7 +235,6 @@ class ThsAuto:
     def buy(self, stock_no, amount, price):
         self.switch_to_normal()
         hot_key(['F1'])
-        time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
@@ -328,11 +334,14 @@ class ThsAuto:
     def cancel(self, entrust_no):
         self.switch_to_normal()
         hot_key(['F3'])
-        time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
-        self.right_click_menu(ctrl, -50, -50, idx=3)
+        
+        # self.right_click_menu(ctrl, -50, -50, idx=3)
+        win32gui.SetForegroundWindow(ctrl)
+        hot_key(['ctrl', 'c'])
+
         data = None
         retry = 0
         while not data and retry < retry_time:
@@ -409,7 +418,7 @@ class ThsAuto:
         win32api.SetCursorPos((x, y))
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-        time.sleep(sleep_time)
+        time.sleep(refresh_sleep_time)
 
     def active_mian_window(self):
         if self.hwnd_main is not None:
