@@ -1,5 +1,6 @@
 import win32api
 import win32gui
+import win32ui
 import win32con
 import win32clipboard
 import win32process
@@ -7,6 +8,11 @@ import win32process
 import ctypes
 import time
 import math
+import os
+
+from PIL import Image
+import ddddocr
+DdddOcr = ddddocr.DdddOcr()
 
 from const import VK_CODE, BALANCE_CONTROL_ID_GROUP
 
@@ -25,6 +31,7 @@ def get_clipboard_data():
     return data
 
 def hot_key(keys):
+    time.sleep(sleep_time)
     for key in keys:
         win32api.keybd_event(VK_CODE[key], 0, 0, 0)
     for key in reversed(keys):
@@ -107,6 +114,34 @@ class ThsAuto:
         hwnd = win32gui.FindWindowEx(hwnd, None, 'CCustomTabCtrl', None)
         return hwnd
 
+    def get_ocr_hwnd(self):
+        tid, pid = win32process.GetWindowThreadProcessId(self.hwnd_main)
+        def enum_children(hwnd, results):
+            try:
+                if (win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd)):
+                    win32gui.EnumChildWindows(hwnd, handler, results)
+            except Exception:
+                return
+
+        def handler(hwnd, results):
+            if win32gui.GetClassName(hwnd) == 'Static':
+                results.append(hwnd)
+                return False
+            enum_children(hwnd, results)
+            return len(results) == 0
+
+        popups = []
+        windows = []            
+        win32gui.EnumThreadWindows(tid, lambda hwnd, l: l.append(hwnd), windows)
+        for hwnd in windows:
+            if not handler(hwnd, popups):
+                break
+        for ctrl in popups:
+            text = get_text(ctrl)
+            if u"检测到您正在拷贝数据" in text:
+                return ctypes.windll.user32.GetWindow(ctrl, win32con.GW_HWNDNEXT)
+        return 0
+
     def get_balance(self):
         self.switch_to_normal()
         hot_key(['F4'])
@@ -130,9 +165,7 @@ class ThsAuto:
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
 
-        # self.right_click_menu(ctrl, -50, -50, idx=5)
-        win32gui.SetForegroundWindow(ctrl)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
 
         data = None
         retry = 0
@@ -151,14 +184,11 @@ class ThsAuto:
         self.switch_to_normal()
         hot_key(['F1'])
         hot_key(['F8'])
-        time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
 
-        # self.right_click_menu(ctrl, -50, -50, idx=3)
-        win32gui.SetForegroundWindow(ctrl)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
         
         data = None
         retry = 0
@@ -177,14 +207,11 @@ class ThsAuto:
         self.switch_to_normal()
         hot_key(['F2'])
         hot_key(['F7'])
-        time.sleep(sleep_time)
         self.refresh()
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
 
-        # self.right_click_menu(ctrl, -50, -50, idx=3)
-        win32gui.SetForegroundWindow(ctrl)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
 
         data = None
         retry = 0
@@ -202,6 +229,7 @@ class ThsAuto:
     def sell(self, stock_no, amount, price):
         self.switch_to_normal()
         hot_key(['F2'])
+        time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
@@ -235,6 +263,7 @@ class ThsAuto:
     def buy(self, stock_no, amount, price):
         self.switch_to_normal()
         hot_key(['F1'])
+        time.sleep(sleep_time)
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x408)
         set_text(ctrl, stock_no)
@@ -338,9 +367,7 @@ class ThsAuto:
         hwnd = self.get_right_hwnd()
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
         
-        # self.right_click_menu(ctrl, -50, -50, idx=3)
-        win32gui.SetForegroundWindow(ctrl)
-        hot_key(['ctrl', 'c'])
+        self.copy_table(ctrl)
 
         data = None
         retry = 0
@@ -375,8 +402,7 @@ class ThsAuto:
         tid, pid = win32process.GetWindowThreadProcessId(self.hwnd_main)
         def enum_children(hwnd, results):
             try:
-                if (win32gui.IsWindowVisible(hwnd) and
-                        win32gui.IsWindowEnabled(hwnd)):
+                if (win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd)):
                     win32gui.EnumChildWindows(hwnd, handler, results)
             except Exception:
                 return
@@ -412,12 +438,7 @@ class ThsAuto:
                 }
 
     def refresh(self):
-        left, top, right, bottom = win32gui.GetWindowRect(self.hwnd_main)
-        x = 170 + left
-        y = 40 + top
-        win32api.SetCursorPos((x, y))
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        hot_key(['F5'])
         time.sleep(refresh_sleep_time)
 
     def active_mian_window(self):
@@ -485,6 +506,51 @@ class ThsAuto:
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
         time.sleep(sleep_time)
+
+
+    def copy_table(self, hwnd):
+        win32gui.SetForegroundWindow(hwnd)
+        os.system('echo off | clip')
+        hot_key(['ctrl', 'c'])
+        self.input_ocr()
+
+    def input_ocr(self):  
+        ocr = self.get_ocr_hwnd()
+        if ocr > 0:
+            self.capture_window(ocr, 'ocr.png')
+            with open('ocr.png', 'rb') as f:
+                data = f.read()
+                code = DdddOcr.classification(data)
+                ctrl = ctypes.windll.user32.GetWindow(ocr, win32con.GW_HWNDNEXT)
+                ctrl = ctypes.windll.user32.GetWindow(ctrl, win32con.GW_HWNDNEXT)
+                ctrl = ctypes.windll.user32.GetWindow(ctrl, win32con.GW_HWNDNEXT)
+                set_text(ctrl, code)
+                hot_key(['enter'])
+
+    def capture_window(self, hwnd, file_name):
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+        width = right - left
+        height = bottom - top
+
+        hdc = win32gui.GetWindowDC(hwnd)
+        dc = win32ui.CreateDCFromHandle(hdc)
+        cdc = dc.CreateCompatibleDC()
+        bmp = win32ui.CreateBitmap()
+        bmp.CreateCompatibleBitmap(dc, width, height)
+        cdc.SelectObject(bmp)
+        cdc.BitBlt((0, 0), (width, height), dc, (0, 0), win32con.SRCCOPY)
+
+        info = bmp.GetInfo()
+        bits = bmp.GetBitmapBits(True)
+        img = Image.frombuffer("RGB", (info['bmWidth'], info['bmHeight']), bits, 'raw', 'BGRX', 0, 1)
+
+        win32gui.DeleteObject(bmp.GetHandle())
+        dc.DeleteDC()
+        cdc.DeleteDC()
+        win32gui.ReleaseDC(hwnd, hdc)
+
+        img.save(file_name)
+
 
     def test(self):
         pass
