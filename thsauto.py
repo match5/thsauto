@@ -44,13 +44,11 @@ def set_text(hwnd, string):
     win32api.keybd_event(VK_CODE['backspace'], 0, win32con.KEYEVENTF_KEYUP, 0)
     for char in string:
         if char.isupper():
-            print("upper")
             win32api.keybd_event(0xA0, 0, 0, 0)
             win32api.keybd_event(VK_CODE[char.lower()], 0, 0, 0)
             win32api.keybd_event(VK_CODE[char.lower()], 0, win32con.KEYEVENTF_KEYUP, 0)
             win32api.keybd_event(0xA0, 0, win32con.KEYEVENTF_KEYUP, 0)
         else:
-            print("not upper")
             win32api.keybd_event(VK_CODE[char], 0, 0, 0)
             win32api.keybd_event(VK_CODE[char], 0, win32con.KEYEVENTF_KEYUP, 0)
 
