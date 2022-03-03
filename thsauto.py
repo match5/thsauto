@@ -1,3 +1,5 @@
+import re
+
 import win32api
 import win32gui
 import win32ui
@@ -66,7 +68,8 @@ def parse_table(text):
         info = {}
         items = lines[i].split('\t')
         for j in range(len(keys)):
-            info[keys[j]] = items[j]
+            newkey = re.sub('\W+', '', keys[j])
+            info[newkey] = items[j]
         result.append(info)
     return result
 
