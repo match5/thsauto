@@ -43,8 +43,14 @@ def set_text(hwnd, string):
     win32api.keybd_event(VK_CODE['backspace'], 0, 0, 0)
     win32api.keybd_event(VK_CODE['backspace'], 0, win32con.KEYEVENTF_KEYUP, 0)
     for char in string:
-        win32api.keybd_event(VK_CODE[char], 0, 0, 0)
-        win32api.keybd_event(VK_CODE[char], 0, win32con.KEYEVENTF_KEYUP, 0)
+        if char.isupper():
+            win32api.keybd_event(0xA0, 0, 0, 0)
+            win32api.keybd_event(VK_CODE[char.lower()], 0, 0, 0)
+            win32api.keybd_event(VK_CODE[char.lower()], 0, win32con.KEYEVENTF_KEYUP, 0)
+            win32api.keybd_event(0xA0, 0, win32con.KEYEVENTF_KEYUP, 0)
+        else:
+            win32api.keybd_event(VK_CODE[char], 0, 0, 0)
+            win32api.keybd_event(VK_CODE[char], 0, win32con.KEYEVENTF_KEYUP, 0)
 
 def get_text(hwnd):
     length = ctypes.windll.user32.SendMessageW(hwnd, win32con.WM_GETTEXTLENGTH)
