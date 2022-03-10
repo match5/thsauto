@@ -94,23 +94,23 @@ class ThsAuto:
 
     def get_tree_hwnd(self):
         hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'Afx:400000:0', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame140s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd140s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, None, "HexinScrollWnd")
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd140s', None)
         hwnd = win32gui.FindWindowEx(hwnd, None, 'SysTreeView32', None)
         return hwnd
 
     def get_right_hwnd(self):
         hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame140s', None)
         hwnd = win32gui.GetDlgItem(hwnd, 0xE901)
         return hwnd
 
     def get_left_bottom_tabs(self):
         hwnd = self.hwnd_main
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame42s', None)
-        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd42s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxMDIFrame140s', None)
+        hwnd = win32gui.FindWindowEx(hwnd, None, 'AfxWnd140s', None)
         hwnd = win32gui.FindWindowEx(hwnd, None, 'CCustomTabCtrl', None)
         return hwnd
 
