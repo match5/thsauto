@@ -31,11 +31,12 @@ def get_clipboard_data():
     return data
 
 def hot_key(keys):
-    time.sleep(sleep_time)
     for key in keys:
         win32api.keybd_event(VK_CODE[key], 0, 0, 0)
+        time.sleep(sleep_time)
     for key in reversed(keys):
         win32api.keybd_event(VK_CODE[key], 0, win32con.KEYEVENTF_KEYUP, 0)
+        time.sleep(sleep_time)
 
 def set_text(hwnd, string):
     win32gui.SetForegroundWindow(hwnd)
