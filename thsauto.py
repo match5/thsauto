@@ -20,7 +20,7 @@ sleep_time = 0.2
 refresh_sleep_time = 0.5
 retry_time = 10
 
-window_title = u'网上股票交易系统5.0'
+window_title = u'国金全能行远航版'
 
 def get_clipboard_data():
     win32clipboard.OpenClipboard()
@@ -135,14 +135,24 @@ class ThsAuto:
                 return False
             enum_children(hwnd, results)
             return len(results) == 0
+   
+        def callback1(hwnd, _):
+            if win32gui.GetClassName(hwnd) == "#32770":
+                windows.append(hwnd)
+            return True
 
-        popups = []
-        windows = []            
-        win32gui.EnumThreadWindows(tid, lambda hwnd, l: l.append(hwnd), windows)
-        for hwnd in windows:
-            if not handler(hwnd, popups):
-                break
-        for ctrl in popups:
+        def callback2(hwnd, _):
+            if win32gui.GetClassName(hwnd) == "Static":
+                windows.append(hwnd)
+            return True
+        
+        windows = []
+        win32gui.EnumWindows(callback1, None)
+        for window in windows:
+            win32gui.EnumChildWindows(window, callback2, None)
+        
+
+        for ctrl in windows:
             text = get_text(ctrl)
             if u"检测到您正在拷贝数据" in text:
                 return ctypes.windll.user32.GetWindow(ctrl, win32con.GW_HWNDNEXT)
@@ -162,6 +172,13 @@ class ThsAuto:
             'code': 0, 'status': 'succeed',
             'data': data,
         }
+    
+    def empty_clipboard(self):
+        win32clipboard.OpenClipboard()
+        try:
+            win32clipboard.EmptyClipboard()
+        finally:
+            win32clipboard.CloseClipboard()
         
     def get_position(self):
         self.switch_to_normal()
@@ -172,9 +189,9 @@ class ThsAuto:
         ctrl = win32gui.GetDlgItem(hwnd, 0x417)
 
         self.copy_table(ctrl)
-
         data = None
         retry = 0
+        #self.empty_clipboard()
         while not data and retry < retry_time:
             retry += 1
             time.sleep(sleep_time)
@@ -518,6 +535,7 @@ class ThsAuto:
         win32gui.SetForegroundWindow(hwnd)
         os.system('echo off | clip')
         hot_key(['ctrl', 'c'])
+        time.sleep(0.2)
         self.input_ocr()
 
     def input_ocr(self):  
@@ -535,8 +553,8 @@ class ThsAuto:
 
     def capture_window(self, hwnd, file_name):
         left, top, right, bottom = win32gui.GetWindowRect(hwnd)
-        width = right - left
-        height = bottom - top
+        width = right - left + 40
+        height = bottom - top + 10
 
         hdc = win32gui.GetWindowDC(hwnd)
         dc = win32ui.CreateDCFromHandle(hdc)
